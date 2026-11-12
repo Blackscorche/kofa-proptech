@@ -1,0 +1,20 @@
+{
+  "name": "kofa",
+  "version": "1.0.0",
+  "description": "Kofa Proptech - Safe Nigerian rental platform connecting landlords, verified agents, and tenants with USSD & web",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "keywords": [
+    "proptech",
+    "ussd",
+    "africastalking",
+    "realestate",
+    "nigeria",
+    "escrow"
+  ],
+  "author": "Kofa Team",
+  "license": "ISC"
+}

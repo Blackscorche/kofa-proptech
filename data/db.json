@@ -1,0 +1,195 @@
+{
+  "properties": [
+    {
+      "id": "PROP-D9EF92",
+      "title": "2-Bedroom Serviced Flat, Ungwan Boro",
+      "location": "Ungwan Boro",
+      "city": "Kaduna",
+      "bedrooms": 2,
+      "bathrooms": 2,
+      "type": "Flat",
+      "originalRent": 1000000,
+      "image": "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1200&q=80",
+      "amenities": [
+        "Fenced compound",
+        "Borehole water",
+        "Prepaid meter",
+        "Security post"
+      ],
+      "accountNumber": "KOF-104921",
+      "landlordName": "Alhaji Musa Garba",
+      "landlordPhone": "+2348031112233",
+      "status": "private",
+      "createdAt": "2026-11-12T10:59:42.528Z"
+    },
+    {
+      "id": "PROP-811C53",
+      "title": "Modern Room Self-Contain, Kakuri",
+      "location": "Kakuri",
+      "city": "Kaduna",
+      "bedrooms": 1,
+      "bathrooms": 1,
+      "type": "Self-contain",
+      "originalRent": 450000,
+      "image": "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1200&q=80",
+      "amenities": [
+        "Private kitchen",
+        "Water heater",
+        "Secure gate"
+      ],
+      "accountNumber": "KOF-104922",
+      "landlordName": "Grace Danjuma",
+      "landlordPhone": "+2348032223344",
+      "status": "private",
+      "createdAt": "2026-11-12T10:59:42.529Z"
+    },
+    {
+      "id": "PROP-3C0D4B",
+      "title": "3-Bedroom Bungalow with Compound, Narayi",
+      "location": "Narayi High Cost",
+      "city": "Kaduna",
+      "bedrooms": 3,
+      "bathrooms": 3,
+      "type": "Bungalow",
+      "originalRent": 2000000,
+      "image": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80",
+      "amenities": [
+        "24/7 solar backup",
+        "Car port for 3 cars",
+        "Interlocked yard"
+      ],
+      "accountNumber": "KOF-104923",
+      "landlordName": "Chief Emmanuel Eze",
+      "landlordPhone": "+2348033334455",
+      "status": "private",
+      "createdAt": "2026-11-12T10:59:42.529Z"
+    },
+    {
+      "id": "PROP-CCB191",
+      "title": "Spacious 2-Bedroom Apartment, Kawo",
+      "location": "Kawo New Extension",
+      "city": "Kaduna",
+      "bedrooms": 2,
+      "bathrooms": 2,
+      "type": "Flat",
+      "originalRent": 800000,
+      "image": "https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?auto=format&fit=crop&w=1200&q=80",
+      "amenities": [
+        "Constant running water",
+        "POP ceiling",
+        "Balcony"
+      ],
+      "accountNumber": "KOF-104924",
+      "landlordName": "Hajiya Fatima Bello",
+      "landlordPhone": "+2348034445566",
+      "status": "private",
+      "createdAt": "2026-11-12T10:59:42.529Z"
+    },
+    {
+      "id": "PROP-6763DB",
+      "title": "Executive 4-Bedroom Duplex, Lekki Phase 1",
+      "location": "Lekki Phase 1",
+      "city": "Lagos",
+      "bedrooms": 4,
+      "bathrooms": 4,
+      "type": "Duplex",
+      "originalRent": 9000000,
+      "image": "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=1200&q=80",
+      "amenities": [
+        "Swimming pool",
+        "Fitted kitchen",
+        "24/7 security patrol",
+        "Gym access"
+      ],
+      "accountNumber": "KOF-104925",
+      "landlordName": "Babafemi Williams",
+      "landlordPhone": "+2348035556677",
+      "status": "private",
+      "createdAt": "2026-11-12T10:59:42.529Z"
+    }
+  ],
+  "publications": [
+    {
+      "id": "PUB-AA4256",
+      "propertyId": "PROP-D9EF92",
+      "agentCode": "AGT 0412",
+      "agentName": "Abubakar Sadiq",
+      "agency": "Arewa Prime Realty",
+      "agentPhone": "+2348030000001",
+      "rating": "4.9",
+      "status": "published",
+      "createdAt": "2026-11-12T10:59:42.529Z"
+    },
+    {
+      "id": "PUB-C03EC3",
+      "propertyId": "PROP-D9EF92",
+      "agentCode": "AGT 0702",
+      "agentName": "Tunde Balogun",
+      "agency": "Trust Shelter Ltd",
+      "agentPhone": "+2348030000002",
+      "rating": "4.8",
+      "status": "published",
+      "createdAt": "2026-11-12T10:59:42.529Z"
+    },
+    {
+      "id": "PUB-45F238",
+      "propertyId": "PROP-811C53",
+      "agentCode": "AGT 0412",
+      "agentName": "Abubakar Sadiq",
+      "agency": "Arewa Prime Realty",
+      "agentPhone": "+2348030000001",
+      "rating": "4.9",
+      "status": "published",
+      "createdAt": "2026-11-12T10:59:42.529Z"
+    },
+    {
+      "id": "PUB-3EAAFE",
+      "propertyId": "PROP-3C0D4B",
+      "agentCode": "AGT 0905",
+      "agentName": "Amaka Okafor",
+      "agency": "Apex Shelter",
+      "agentPhone": "+2348030000003",
+      "rating": "4.95",
+      "status": "published",
+      "createdAt": "2026-11-12T10:59:42.529Z"
+    },
+    {
+      "id": "PUB-98224C",
+      "propertyId": "PROP-CCB191",
+      "agentCode": "AGT 0702",
+      "agentName": "Tunde Balogun",
+      "agency": "Trust Shelter Ltd",
+      "agentPhone": "+2348030000002",
+      "rating": "4.8",
+      "status": "published",
+      "createdAt": "2026-11-12T10:59:42.529Z"
+    }
+  ],
+  "inspections": [
+    {
+      "id": "INS-82A35C",
+      "trackingId": "TRK-C0A395",
+      "propertyId": "PROP-D9EF92",
+      "propertyAccountNumber": "KOF-104921",
+      "propertyTitle": "2-Bedroom Serviced Flat, Ungwan Boro",
+      "propertyLocation": "Ungwan Boro, Kaduna",
+      "publicationId": "PUB-AA4256",
+      "agentCode": "AGT 0412",
+      "agentName": "Abubakar Sadiq",
+      "agentPhone": "+2348030000001",
+      "tenantName": "Phone User",
+      "tenantPhone": "+2348031234567",
+      "preferredTime": "Afternoon",
+      "channel": "USSD",
+      "status": "Requested",
+      "price": 1100000,
+      "expiresAt": "2026-11-13T10:59:42.532Z",
+      "createdAt": "2026-11-12T10:59:42.533Z",
+      "updatedAt": "2026-11-12T10:59:42.533Z"
+    }
+  ],
+  "payments": [],
+  "users": [],
+  "complaints": [],
+  "meta": {}
+}

@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kofa USSD Live Simulator | Dial *555#</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..800&family=Instrument+Sans:wght@400..700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    body {
+      background: radial-gradient(circle at top right, rgba(246, 185, 26, 0.15), transparent 50%),
+                  radial-gradient(circle at bottom left, rgba(16, 36, 58, 0.08), transparent 50%),
+                  var(--paper);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .sim-container {
+      max-width: 1100px;
+      margin: 40px auto;
+      padding: 0 24px;
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 50px;
+      align-items: center;
+      flex: 1;
+    }
+    .sim-info h1 {
+      font-size: clamp(2.2rem, 3.2vw, 3.4rem);
+      color: var(--ink);
+      line-height: 1.1;
+      margin-bottom: 16px;
+    }
+    .badge-live {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--green-bg);
+      color: var(--green);
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+    .badge-live::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 0 3px rgba(22, 121, 76, 0.2);
+    }
+    .sim-info p.lead {
+      color: var(--ink-2);
+      font-size: 1.1rem;
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .sim-card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--r-lg);
+      padding: 24px;
+      box-shadow: 0 10px 30px rgba(16, 36, 58, 0.04);
+      margin-bottom: 24px;
+    }
+    .sim-card h3 {
+      font-size: 1.1rem;
+      margin-bottom: 10px;
+    }
+    .phone-device {
+      width: 320px;
+      height: 620px;
+      background: #111;
+      border-radius: 46px;
+      padding: 14px;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.1);
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+    .screen-bezel {
+      flex: 1;
+      background: #1c2b39;
+      border-radius: 36px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .status-bar {
+      height: 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 18px;
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.7);
+      font-family: var(--font);
+    }
+    .notch {
+      width: 90px;
+      height: 18px;
+      background: #111;
+      border-radius: 0 0 12px 12px;
+    }
+    .screen-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 16px;
+      background: #13202e;
+    }
+    .ussd-popup {
+      margin: auto 0;
+      background: #f7f9fa;
+      border-radius: 18px;
+      box-shadow: 0 12px 36px rgba(0,0,0,0.4);
+      overflow: hidden;
+      border: 1px solid #e1e6eb;
+      animation: popIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes popIn {
+      from { transform: scale(0.95); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    .ussd-header {
+      background: #eceff2;
+      padding: 10px 14px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #556677;
+      border-bottom: 1px solid #dde3e8;
+      display: flex;
+      justify-content: space-between;
+    }
+    .ussd-body {
+      padding: 16px 14px;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 13.5px;
+      line-height: 1.5;
+      color: #10243a;
+      white-space: pre-wrap;
+      max-height: 250px;
+      overflow-y: auto;
+    }
+    .ussd-input-wrap {
+      padding: 0 14px 14px;
+    }
+    .ussd-input-field {
+      width: 100%;
+      height: 38px;
+      border: 1.5px solid #c8d3dd;
+      border-radius: 8px;
+      padding: 0 10px;
+      font-size: 14px;
+      font-family: "JetBrains Mono", monospace;
+      outline: none;
+      box-sizing: border-box;
+    }
+    .ussd-input-field:focus {
+      border-color: #1f5fa8;
+    }
+    .ussd-buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border-top: 1px solid #e1e6eb;
+    }
+    .ussd-btn {
+      background: none;
+      border: none;
+      padding: 12px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      color: #1f5fa8;
+    }
+    .ussd-btn:first-child {
+      border-right: 1px solid #e1e6eb;
+      color: #667788;
+    }
+    .dialer-view {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    .dialer-code {
+      font-size: 28px;
+      font-weight: 700;
+      color: #fff;
+      font-family: "JetBrains Mono", monospace;
+      margin-bottom: 30px;
+      letter-spacing: 0.05em;
+    }
+    .call-trigger {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: #16794c;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(22, 121, 76, 0.4);
+      transition: transform 0.15s ease;
+    }
+    .call-trigger:hover {
+      transform: scale(1.06);
+    }
+    .call-trigger svg {
+      width: 26px;
+      height: 26px;
+      stroke: #fff;
+      fill: none;
+      stroke-width: 2.2;
+    }
+    .quick-flow {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 14px;
+    }
+    .step-pill {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      background: #f8fafc;
+      border: 1px solid var(--line);
+      border-radius: var(--r-sm);
+      font-size: 0.88rem;
+    }
+    .step-num {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--ink);
+      color: #fff;
+      font-size: 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <a class="brand" href="index.html">
+        <svg viewBox="0 0 32 32" aria-hidden="true" focusable="false" style="width:32px;height:32px"><rect width="32" height="32" rx="8" fill="#F6B91A"/><path d="M10 25V13.5a6 6 0 0 1 12 0V25" fill="none" stroke="#10243A" stroke-width="3" stroke-linecap="round"/><circle cx="19" cy="19" r="1.7" fill="#10243A"/></svg>
+        Kofa
+      </a>
+      <nav class="site-nav" aria-label="Main">
+        <a href="listings.html">Browse Homes</a>
+        <a href="index.html#how">How it Works</a>
+        <a href="safety.html">Safety & Escrow</a>
+        <a href="ussd.html">USSD Guide</a>
+        <a href="ussd-simulator.html" class="active" aria-current="page">Live Simulator</a>
+        <a href="login.html">Log In</a>
+        <a class="btn btn-plate" href="register.html">Sign Up</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="sim-container">
+    <div class="sim-info">
+      <div class="badge-live">Africa's Talking USSD Gateway (Live Sync)</div>
+      <h1>Rent from any phone without internet.</h1>
+      <p class="lead">Test Kofa's USSD workflow just like a tenant dialing <strong>*555#</strong> on a button phone in Kaduna, Lagos, or Abuja. Every inspection requested here creates a live <strong>Tracking ID</strong> that syncs into the Agent and Admin dashboards.</p>
+
+      <div class="sim-card">
+        <h3>Connected Backend Flow</h3>
+        <p class="muted small">This simulator posts directly to Kofa's server <code>/ussd</code> Africa's Talking webhook handler.</p>
+        <div class="quick-flow">
+          <div class="step-pill"><span class="step-num">1</span> Dial <strong>*555#</strong> &rarr; Select "Find a home"</div>
+          <div class="step-pill"><span class="step-num">2</span> Filter by budget (e.g. Up to ₦3m) &rarr; Choose property</div>
+          <div class="step-pill"><span class="step-num">3</span> See verified Agent Code &amp; Select inspection time</div>
+          <div class="step-pill"><span class="step-num">4</span> Tracking ID created &amp; SMS confirmation triggered!</div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:12px">
+        <a class="btn btn-plate" href="listings.html">Browse Web Listings</a>
+        <a class="btn btn-ghost" href="agent/index.html">View Agent Dashboard</a>
+      </div>
+    </div>
+
+    <!-- Phone Simulator -->
+    <div class="phone-device">
+      <div class="screen-bezel">
+        <div class="status-bar">
+          <span>MTN-NG 4G</span>
+          <div class="notch"></div>
+          <span>11:55</span>
+        </div>
+
+        <div class="screen-content" id="screen">
+          <!-- Default: Dialer Screen -->
+          <div class="dialer-view" id="dialerView">
+            <div style="color:rgba(255,255,255,0.5);font-size:12px;margin-bottom:8px">DIAL KOFA USSD CODE</div>
+            <div class="dialer-code">*555#</div>
+            <button class="call-trigger" id="btnCall" title="Dial *555#">
+              <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            </button>
+            <div style="color:rgba(255,255,255,0.4);font-size:12px;margin-top:14px">Tap green button to dial</div>
+          </div>
+
+          <!-- USSD Dialog Screen -->
+          <div class="ussd-popup" id="ussdPopup" style="display:none">
+            <div class="ussd-header">
+              <span>Kofa USSD (*555#)</span>
+              <span id="sessionStatus">Connected</span>
+            </div>
+            <div class="ussd-body" id="ussdText">Loading...</div>
+            <div class="ussd-input-wrap" id="inputWrap">
+              <input type="text" class="ussd-input-field" id="ussdInput" placeholder="Type reply (e.g. 1)..." autofocus>
+            </div>
+            <div class="ussd-buttons">
+              <button class="ussd-btn" id="btnCancel">Cancel</button>
+              <button class="ussd-btn" id="btnSend">Send</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <a class="brand" href="index.html">Kofa</a>
+          <p class="mt-1">Making Nigerian house hunting transparent, verified, and scam-free.</p>
+        </div>
+        <div>
+          <h2>Platform</h2>
+          <ul>
+            <li><a href="listings.html">Find a Home</a></li>
+            <li><a href="safety.html">Safety &amp; Escrow</a></li>
+            <li><a href="ussd.html">USSD Service</a></li>
+            <li><a href="ussd-simulator.html">USSD Simulator</a></li>
+          </ul>
+        </div>
+        <div>
+          <h2>Workspaces</h2>
+          <ul>
+            <li><a href="tenant/index.html">Tenant Portal</a></li>
+            <li><a href="agent/index.html">Agent Workspace</a></li>
+            <li><a href="landlord/index.html">Landlord Workspace</a></li>
+            <li><a href="admin/index.html">Admin Central</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      var dialerView = document.getElementById('dialerView');
+      var ussdPopup = document.getElementById('ussdPopup');
+      var ussdText = document.getElementById('ussdText');
+      var ussdInput = document.getElementById('ussdInput');
+      var inputWrap = document.getElementById('inputWrap');
+      var btnCall = document.getElementById('btnCall');
+      var btnSend = document.getElementById('btnSend');
+      var btnCancel = document.getElementById('btnCancel');
+      var sessionStatus = document.getElementById('sessionStatus');
+
+      var sessionId = 'sim-' + Math.random().toString(36).substring(2, 9);
+      var currentText = '';
+      var testPhone = '+2348039998877';
+
+      function sendToUssd(text) {
+        ussdText.textContent = 'Communicating with Africa\'s Talking...';
+        fetch('/ussd', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            sessionId: sessionId,
+            serviceCode: '*555#',
+            phoneNumber: testPhone,
+            text: text
+          })
+        })
+        .then(function(res) { return res.text(); })
+        .then(function(reply) {
+          if (reply.startsWith('CON ')) {
+            ussdText.textContent = reply.replace('CON ', '');
+            inputWrap.style.display = 'block';
+            btnSend.textContent = 'Send';
+            btnCancel.textContent = 'Cancel';
+            ussdInput.value = '';
+            ussdInput.focus();
+          } else if (reply.startsWith('END ')) {
+            ussdText.textContent = reply.replace('END ', '');
+            inputWrap.style.display = 'none';
+            btnSend.textContent = 'OK';
+            btnCancel.textContent = 'Dismiss';
+            sessionStatus.textContent = 'Completed';
+          } else {
+            ussdText.textContent = reply;
+          }
+        })
+        .catch(function(err) {
+          ussdText.textContent = 'Connection error: ' + err.message;
+        });
+      }
+
+      btnCall.addEventListener('click', function () {
+        sessionId = 'sim-' + Math.random().toString(36).substring(2, 9);
+        currentText = '';
+        dialerView.style.display = 'none';
+        ussdPopup.style.display = 'block';
+        sessionStatus.textContent = 'Connected';
+        sendToUssd('');
+      });
+
+      function submitAnswer() {
+        if (inputWrap.style.display === 'none') {
+          // Session ended, return to dialer
+          ussdPopup.style.display = 'none';
+          dialerView.style.display = 'flex';
+          return;
+        }
+        var val = ussdInput.value.trim();
+        if (!val) return;
+        currentText = currentText ? (currentText + '*' + val) : val;
+        sendToUssd(currentText);
+      }
+
+      btnSend.addEventListener('click', submitAnswer);
+      ussdInput.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') submitAnswer();
+      });
+
+      btnCancel.addEventListener('click', function () {
+        ussdPopup.style.display = 'none';
+        dialerView.style.display = 'flex';
+      });
+    })();
+  </script>
+</body>
+</html>
