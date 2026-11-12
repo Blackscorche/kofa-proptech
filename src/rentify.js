@@ -10,155 +10,67 @@ const COMMISSION_RATE = 0.10; // strictly 10%
 const token = (prefix) => `${prefix}-${crypto.randomBytes(3).toString('hex').toUpperCase()}`;
 const today = () => new Date().toISOString();
 
-// Seed initial realistic listings if empty
+// Seed initial demo data — 1 landlord property (uploaded by demo landlord),
+// published by demo agent, with 1 demo tenant inspection already booked.
 function seed() {
   if (db.data.properties && db.data.properties.length > 0) return;
 
-  const sampleProperties = [
-    {
-      title: '2-Bedroom Serviced Flat, Ungwan Boro',
-      location: 'Ungwan Boro',
-      city: 'Kaduna',
-      bedrooms: 2,
-      bathrooms: 2,
-      type: 'Flat',
-      originalRent: 1000000,
-      image: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1200&q=80',
-      amenities: ['Fenced compound', 'Borehole water', 'Prepaid meter', 'Security post'],
-      accountNumber: 'KOF-104921',
-      landlordName: 'Alhaji Musa Garba',
-      landlordPhone: '+2348031112233',
-    },
-    {
-      title: 'Modern Room Self-Contain, Kakuri',
-      location: 'Kakuri',
-      city: 'Kaduna',
-      bedrooms: 1,
-      bathrooms: 1,
-      type: 'Self-contain',
-      originalRent: 450000,
-      image: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1200&q=80',
-      amenities: ['Private kitchen', 'Water heater', 'Secure gate'],
-      accountNumber: 'KOF-104922',
-      landlordName: 'Grace Danjuma',
-      landlordPhone: '+2348032223344',
-    },
-    {
-      title: '3-Bedroom Bungalow with Compound, Narayi',
-      location: 'Narayi High Cost',
-      city: 'Kaduna',
-      bedrooms: 3,
-      bathrooms: 3,
-      type: 'Bungalow',
-      originalRent: 2000000,
-      image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80',
-      amenities: ['24/7 solar backup', 'Car port for 3 cars', 'Interlocked yard'],
-      accountNumber: 'KOF-104923',
-      landlordName: 'Chief Emmanuel Eze',
-      landlordPhone: '+2348033334455',
-    },
-    {
-      title: 'Spacious 2-Bedroom Apartment, Kawo',
-      location: 'Kawo New Extension',
-      city: 'Kaduna',
-      bedrooms: 2,
-      bathrooms: 2,
-      type: 'Flat',
-      originalRent: 800000,
-      image: 'https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?auto=format&fit=crop&w=1200&q=80',
-      amenities: ['Constant running water', 'POP ceiling', 'Balcony'],
-      accountNumber: 'KOF-104924',
-      landlordName: 'Hajiya Fatima Bello',
-      landlordPhone: '+2348034445566',
-    },
-    {
-      title: 'Executive 4-Bedroom Duplex, Lekki Phase 1',
-      location: 'Lekki Phase 1',
-      city: 'Lagos',
-      bedrooms: 4,
-      bathrooms: 4,
-      type: 'Duplex',
-      originalRent: 9000000,
-      image: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=1200&q=80',
-      amenities: ['Swimming pool', 'Fitted kitchen', '24/7 security patrol', 'Gym access'],
-      accountNumber: 'KOF-104925',
-      landlordName: 'Babafemi Williams',
-      landlordPhone: '+2348035556677',
-    }
-  ];
+  // ── Single demo property owned by the demo landlord account ──
+  const propId = 'PROP-DEMO01';
+  const pubId  = 'PUB-DEMO01';
 
-  sampleProperties.forEach((item, idx) => {
-    const propId = token('PROP');
-    const p = {
-      id: propId,
-      ...item,
-      status: 'private',
-      createdAt: today(),
-    };
-    db.data.properties.push(p);
+  db.data.properties.push({
+    id: propId,
+    title: '2-Bedroom Serviced Flat, Ungwan Boro',
+    location: 'Ungwan Boro',
+    city: 'Kaduna',
+    bedrooms: 2,
+    bathrooms: 2,
+    type: 'Flat',
+    originalRent: 800000,
+    image: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1200&q=80',
+    amenities: ['Fenced compound', 'Borehole water', 'Prepaid meter', 'Security post'],
+    accountNumber: 'KOF-100001',
+    landlordId:    'USR-LANDLORD1',
+    landlordName:  'Joseph Danladi',      // matches demo landlord account
+    landlordPhone: '+2348032223344',
+    status: 'private',
+    createdAt: today(),
+  });
 
-    // Initial agent publications for the first 4 properties
-    if (idx === 0) {
-      db.data.publications.push({
-        id: token('PUB'),
-        propertyId: propId,
-        agentCode: 'AGT 0412',
-        agentName: 'Abubakar Sadiq',
-        agency: 'Arewa Prime Realty',
-        agentPhone: '+2348030000001',
-        rating: '4.9',
-        status: 'published',
-        createdAt: today(),
-      });
-      db.data.publications.push({
-        id: token('PUB'),
-        propertyId: propId,
-        agentCode: 'AGT 0702',
-        agentName: 'Tunde Balogun',
-        agency: 'Trust Shelter Ltd',
-        agentPhone: '+2348030000002',
-        rating: '4.8',
-        status: 'published',
-        createdAt: today(),
-      });
-    } else if (idx === 1) {
-      db.data.publications.push({
-        id: token('PUB'),
-        propertyId: propId,
-        agentCode: 'AGT 0412',
-        agentName: 'Abubakar Sadiq',
-        agency: 'Arewa Prime Realty',
-        agentPhone: '+2348030000001',
-        rating: '4.9',
-        status: 'published',
-        createdAt: today(),
-      });
-    } else if (idx === 2) {
-      db.data.publications.push({
-        id: token('PUB'),
-        propertyId: propId,
-        agentCode: 'AGT 0905',
-        agentName: 'Amaka Okafor',
-        agency: 'Apex Shelter',
-        agentPhone: '+2348030000003',
-        rating: '4.95',
-        status: 'published',
-        createdAt: today(),
-      });
-    } else if (idx === 3) {
-      db.data.publications.push({
-        id: token('PUB'),
-        propertyId: propId,
-        agentCode: 'AGT 0702',
-        agentName: 'Tunde Balogun',
-        agency: 'Trust Shelter Ltd',
-        agentPhone: '+2348030000002',
-        rating: '4.8',
-        status: 'published',
-        createdAt: today(),
-      });
-    }
-    // idx === 4 (Lekki Duplex) starts in private pool for agents to pick up!
+  // ── Demo agent publishes it ──
+  db.data.publications.push({
+    id: pubId,
+    propertyId: propId,
+    agentId:    'USR-AGENT1',
+    agentCode:  'AGT 0412',
+    agentName:  'Abubakar Sadiq',         // matches demo agent account
+    agency:     'Arewa Prime Realty',
+    agentPhone: '+2348030000001',
+    rating: '4.9',
+    status: 'published',
+    createdAt: today(),
+  });
+
+  // ── Demo tenant has 1 booked inspection ──
+  db.data.inspections.push({
+    id:             'INS-DEMO01',
+    trackingId:     'TRK-DEMO01',
+    propertyId:     propId,
+    publicationId:  pubId,
+    propertyTitle:  '2-Bedroom Serviced Flat, Ungwan Boro',
+    tenantId:       'USR-TENANT1',
+    tenantName:     'Maryam Idris',       // matches demo tenant account
+    tenantPhone:    '+2348039998877',
+    agentId:        'USR-AGENT1',
+    agentName:      'Abubakar Sadiq',
+    agentCode:      'AGT 0412',
+    agentPhone:     '+2348030000001',
+    preferredTime:  'Saturday Morning',
+    channel:        'Web',
+    status:         'Requested',
+    expiresAt:      new Date(Date.now() + 86400000).toISOString(),
+    createdAt:      today(),
   });
 
   db.flush();
