@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Kofa USSD Live Simulator | Dial *555#</title>
+  <title>Kofa USSD Live Simulator | Dial *384*22898#</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..800&family=Instrument+Sans:wght@400..700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
@@ -276,13 +276,13 @@
     <div class="sim-info">
       <div class="badge-live">Africa's Talking USSD Gateway (Live Sync)</div>
       <h1>Rent from any phone without internet.</h1>
-      <p class="lead">Test Kofa's USSD workflow just like a tenant dialing <strong>*555#</strong> on a button phone in Kaduna, Lagos, or Abuja. Every inspection requested here creates a live <strong>Tracking ID</strong> that syncs into the Agent and Admin dashboards.</p>
+      <p class="lead">Test Kofa's USSD workflow just like a tenant dialing <strong>*384*22898#</strong> on a button phone in Kaduna, Lagos, or Abuja. Every inspection requested here creates a live <strong>Tracking ID</strong> that syncs into the Agent and Admin dashboards.</p>
 
       <div class="sim-card">
         <h3>Connected Backend Flow</h3>
         <p class="muted small">This simulator posts directly to Kofa's server <code>/ussd</code> Africa's Talking webhook handler.</p>
         <div class="quick-flow">
-          <div class="step-pill"><span class="step-num">1</span> Dial <strong>*555#</strong> &rarr; Select "Find a home"</div>
+          <div class="step-pill"><span class="step-num">1</span> Dial <strong>*384*22898#</strong> &rarr; Select "Find a home"</div>
           <div class="step-pill"><span class="step-num">2</span> Filter by budget (e.g. Up to ₦3m) &rarr; Choose property</div>
           <div class="step-pill"><span class="step-num">3</span> See verified Agent Code &amp; Select inspection time</div>
           <div class="step-pill"><span class="step-num">4</span> Tracking ID created &amp; SMS confirmation triggered!</div>
@@ -308,8 +308,8 @@
           <!-- Default: Dialer Screen -->
           <div class="dialer-view" id="dialerView">
             <div style="color:rgba(255,255,255,0.5);font-size:12px;margin-bottom:8px">DIAL KOFA USSD CODE</div>
-            <div class="dialer-code">*555#</div>
-            <button class="call-trigger" id="btnCall" title="Dial *555#">
+            <div class="dialer-code">*384*22898#</div>
+            <button class="call-trigger" id="btnCall" title="Dial *384*22898#">
               <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
             </button>
             <div style="color:rgba(255,255,255,0.4);font-size:12px;margin-top:14px">Tap green button to dial</div>
@@ -318,7 +318,7 @@
           <!-- USSD Dialog Screen -->
           <div class="ussd-popup" id="ussdPopup" style="display:none">
             <div class="ussd-header">
-              <span>Kofa USSD (*555#)</span>
+              <span>Kofa USSD (*384*22898#)</span>
               <span id="sessionStatus">Connected</span>
             </div>
             <div class="ussd-body" id="ussdText">Loading...</div>
@@ -387,7 +387,7 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             sessionId: sessionId,
-            serviceCode: '*555#',
+            serviceCode: '*384*22898#',
             phoneNumber: testPhone,
             text: text
           })

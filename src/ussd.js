@@ -1,17 +1,19 @@
 // USSD gateway for Africa's Talking → Kofa
 // CON = continue (expect more input)   END = close session
 //
-// Simplified flow — no confusing budget menus:
+// Clean Self-Service Flow:
 //   DIAL *384*22898#
 //   → Main menu (4 options)
-//   → 1. Find a Home  → shows ALL live listings numbered
-//   → Pick a number   → see property detail + agent
-//   → 1 to request inspection → pick Morning/Afternoon/Evening
-//   → Booking confirmed, tracking ID sent by SMS
+//   → 1. Find a Home  → list all published homes
+//   → Pick a number   → details & price
+//   → 1. Book inspection → Pick slot (Morning/Afternoon/Evening)
+//   → Enter Full Name (Auto-creates tenant account if new)
+//   → Confirmed with Tracking ID & syncs straight to Agent dashboard
 
 const db      = require('./db');
 const rentify = require('./rentify');
-const { toE164 } = require('./networks');
+const auth    = require('./auth');
+const { toE164, toLocal } = require('./networks');
 
 function naira(n) {
   if (n >= 1000000) return 'N' + (n / 1000000).toFixed(1).replace('.0', '') + 'm';
@@ -42,15 +44,12 @@ async function handle(body) {
   const top = parts[0];
 
   // ══════════════════════════════════════════════════════
-  // MENU 1 — FIND A HOME
-  // Flow: 1 → list all homes → pick # → detail → 1 inspect → pick time → booked
+  // MENU 1 — FIND A HOME & INSPECT
   // ══════════════════════════════════════════════════════
   if (top === '1') {
-
-    // All published homes (live from DB)
     const homes = rentify.listPublic({});
 
-    // Step 1 — show listing (or "nothing yet")
+    // Step 1 — list all homes
     if (parts.length === 1) {
       if (!homes.length) {
         return 'END No verified homes on Kofa yet.\nCheck back soon or visit kofa.ng';
@@ -83,7 +82,6 @@ async function handle(body) {
     }
 
     if (parts[2] === '0') {
-      // Back to list
       const lines = ['CON Available homes on Kofa:'];
       homes.slice(0, 6).forEach((h, i) => {
         lines.push(`${i + 1}. ${h.bedrooms}bd ${h.type} - ${h.location} ${naira(h.price)}/yr`);
@@ -115,26 +113,55 @@ async function handle(body) {
       ].join('\n');
     }
 
-    // Step 4 — confirm booking
     const timeMap = { '1': 'Morning (8am-12pm)', '2': 'Afternoon (12pm-4pm)', '3': 'Evening (4pm-7pm)' };
     const preferredTime = timeMap[parts[3]];
-    if (!preferredTime) return 'END Invalid time. Please redial.';
+    if (!preferredTime) return 'END Invalid time slot selected. Please redial.';
+
+    // Step 4 — ask for full name to auto-register account
+    if (parts.length === 4) {
+      return [
+        'CON Please enter your Full Name',
+        '(This creates your free tenant profile):',
+      ].join('\n');
+    }
+
+    const rawName = (parts[4] || '').trim();
+    const tenantName = rawName.length > 1 ? rawName : 'Phone User';
+
+    // Auto-register user as tenant in DB if not already present
+    if (!db.data.users) db.data.users = [];
+    let user = db.data.users.find(u => u.phone === phone);
+    if (!user) {
+      user = {
+        id: `USR-T${Date.now().toString().slice(-6)}`,
+        name: tenantName,
+        email: `${phone.replace('+', '')}@kofa.ng`,
+        phone: phone,
+        password: auth.hashPassword('tenant123'),
+        role: 'tenant',
+        status: 'active',
+        createdAt: new Date().toISOString()
+      };
+      db.data.users.push(user);
+    } else if (tenantName !== 'Phone User' && user.name === 'Phone User') {
+      user.name = tenantName;
+    }
 
     try {
       const booking = await rentify.bookInspection({
         propertyId:    home.id,
         publicationId: agent.id,
-        tenantName:    'Phone User',
+        tenantName:    user.name,
         tenantPhone:   phone,
         preferredTime,
         channel:       'USSD',
       });
       return [
-        `END Inspection requested!`,
+        `END Inspection requested, ${user.name.split(' ')[0]}!`,
         `Ref: ${booking.trackingId}`,
-        `Agent: ${agent.agentCode} will confirm by SMS.`,
-        'NEVER pay cash before inspection.',
-        'Pay only via Kofa after you inspect.',
+        `Agent ${agent.agentCode} notified.`,
+        'Log in at kofa.ng to track live.',
+        'Default pass: tenant123',
       ].join('\n');
     } catch (e) {
       return `END ${e.message || 'Could not book. Please try again.'}`;
@@ -203,6 +230,7 @@ async function handle(body) {
     const reason = reasons[parts[1]];
     if (!reason) return 'END Invalid choice. Please redial.';
 
+    if (!db.data.complaints) db.data.complaints = [];
     db.data.complaints.push({
       id: `CMP-${Date.now()}`,
       phone,

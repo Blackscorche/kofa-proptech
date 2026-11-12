@@ -332,14 +332,15 @@ function updateInspectionStatus(trackingId, newStatus, actorPhone = null) {
 
   const validTransitions = {
     Requested: ['Confirmed', 'Declined', 'Cancelled'],
-    Confirmed: ['Done', 'Cancelled'],
+    Confirmed: ['Done', 'Declined', 'Cancelled'],
     Done: ['Paid'],
-    Declined: [],
+    Declined: ['Requested'],
     Cancelled: [],
     Paid: ['Closed'],
     Expired: [],
     Closed: [],
   };
+  if (current === newStatus) return inspection;
 
   const current = inspection.status;
   if (!validTransitions[current] || !validTransitions[current].includes(newStatus)) {

@@ -186,4 +186,5 @@ module.exports = {
   getSession,
   deleteSession,
   sanitizeUser,
+  hashPassword,
 };
