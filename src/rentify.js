@@ -340,9 +340,8 @@ function updateInspectionStatus(trackingId, newStatus, actorPhone = null) {
     Expired: [],
     Closed: [],
   };
-  if (current === newStatus) return inspection;
-
   const current = inspection.status;
+  if (current === newStatus) return inspection;
   if (!validTransitions[current] || !validTransitions[current].includes(newStatus)) {
     const err = new Error(`Cannot change inspection status from ${current} to ${newStatus}.`);
     err.status = 409;

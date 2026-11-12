@@ -116,11 +116,11 @@
       "tenantPhone": "+2348055667788",
       "preferredTime": "Morning (8am-12pm)",
       "channel": "USSD",
-      "status": "Requested",
+      "status": "Confirmed",
       "price": 880000,
       "expiresAt": "2026-11-13T13:48:46.154Z",
       "createdAt": "2026-11-12T13:48:46.154Z",
-      "updatedAt": "2026-11-12T13:48:46.154Z"
+      "updatedAt": "2026-11-12T13:50:22.446Z"
     }
   ],
   "payments": [],
