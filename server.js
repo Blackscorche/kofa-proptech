@@ -8,6 +8,7 @@ const config = require('./src/config');
 const db = require('./src/db');
 const rentify = require('./src/rentify');
 const ussd = require('./src/ussd');
+const auth = require('./src/auth');
 const at = require('./src/africastalking');
 const { toE164, toLocal } = require('./src/networks');
 
@@ -32,6 +33,17 @@ function send(res, status, body, headers = {}) {
     ...headers,
   });
   res.end(isText ? body : JSON.stringify(body));
+}
+
+function parseCookies(req) {
+  const list = {};
+  const cookieHeader = req.headers.cookie;
+  if (!cookieHeader) return list;
+  cookieHeader.split(';').forEach(c => {
+    const parts = c.split('=');
+    list[parts.shift().trim()] = decodeURI(parts.join('='));
+  });
+  return list;
 }
 
 function readBody(req) {
@@ -75,7 +87,6 @@ const route = (method, pattern, handler) => {
 };
 
 // ---------------- USSD & AFRICA'S TALKING WEBHOOKS ----------------
-// Africa's Talking posts { sessionId, serviceCode, phoneNumber, text }
 route('POST', '/ussd', async ({ body }) => ({ __text: await ussd.handle(body) }));
 route('GET', '/ussd-test', async ({ query }) => ({
   __text: await ussd.handle({
@@ -86,21 +97,42 @@ route('GET', '/ussd-test', async ({ query }) => ({
   })
 }));
 
-// SMS delivery callbacks from Africa's Talking
 route('POST', '/callbacks/sms', ({ body }) => {
   console.log(`[SMS DLR] ${body.phoneNumber} -> ${body.status}`);
   return { __text: 'OK' };
 });
 
-// Config & platform stats
 route('GET', '/api/config', () => ({
   ussdCode: config.ussdCode,
   mode: config.at.simulate ? 'Simulation' : 'Africa\'s Talking Live',
   atConfigured: !config.at.simulate,
 }));
 
+// ---------------- AUTHENTICATION APIS ----------------
+route('POST', '/api/auth/register', ({ body }) => {
+  const result = auth.registerUser(body);
+  const cookieStr = `${auth.COOKIE_NAME}=${result.token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${7 * 86400}`;
+  return { ...result, __headers: { 'Set-Cookie': cookieStr } };
+});
+
+route('POST', '/api/auth/login', ({ body }) => {
+  const result = auth.loginUser(body.login || body.email, body.password);
+  const cookieStr = `${auth.COOKIE_NAME}=${result.token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${7 * 86400}`;
+  return { ...result, __headers: { 'Set-Cookie': cookieStr } };
+});
+
+route('POST', '/api/auth/logout', ({ token }) => {
+  if (token) auth.deleteSession(token);
+  const cookieStr = `${auth.COOKIE_NAME}=; Path=/; HttpOnly; Max-Age=0`;
+  return { success: true, __headers: { 'Set-Cookie': cookieStr } };
+});
+
+route('GET', '/api/auth/me', ({ session }) => {
+  if (!session) return { user: null };
+  return { user: session };
+});
+
 // ---------------- PUBLIC PROPERTY APIS ----------------
-// Public only sees properties published by agents
 route('GET', '/api/properties', ({ query }) => ({
   properties: rentify.listPublic(Object.fromEntries(query)),
 }));
@@ -117,8 +149,14 @@ route('GET', '/api/properties/:id', ({ params }) => {
 });
 
 // ---------------- LANDLORD APIS ----------------
-// Landlord uploads private property. Unique account number generated.
-route('POST', '/api/landlord/properties', ({ body }) => rentify.createProperty(body));
+route('POST', '/api/landlord/properties', ({ body, session }) => {
+  const p = rentify.createProperty({
+    ...body,
+    landlordName: (session && session.name) || body.landlordName || 'Verified Landlord',
+    landlordPhone: (session && session.phone) || body.landlordPhone || '',
+  });
+  return p;
+});
 
 route('GET', '/api/landlord/properties', () => {
   rentify.seed();
@@ -131,7 +169,6 @@ route('GET', '/api/landlord/properties', () => {
 });
 
 // ---------------- AGENT APIS ----------------
-// Agents view available pool of landlord uploads
 route('GET', '/api/agent/pool', () => {
   rentify.seed();
   return {
@@ -144,27 +181,36 @@ route('GET', '/api/agent/pool', () => {
   };
 });
 
-// Agent publishes property from pool (adds 10% auto-commission)
-route('POST', '/api/agent/publish/:id', ({ params, body }) => rentify.publishProperty(params.id, body));
+route('POST', '/api/agent/publish/:id', ({ params, body, session }) => {
+  const agentData = {
+    agentName: (session && session.name) || body.agentName || 'Kofa Verified Agent',
+    agentPhone: (session && session.phone) || body.agentPhone || '+2348030000001',
+    agency: (session && session.agency) || body.agency || 'Independent Agency',
+    agentCode: (session && session.agentCode) || body.agentCode,
+  };
+  return rentify.publishProperty(params.id, agentData);
+});
 
-// Agent manages inspections requested by tenants
-route('GET', '/api/agent/inspections', ({ query }) => {
-  const phone = query.get('phone') ? toE164(query.get('phone')) : null;
+route('GET', '/api/agent/inspections', ({ query, session }) => {
+  const phone = (session && session.phone) || (query.get('phone') ? toE164(query.get('phone')) : null);
   let list = db.data.inspections || [];
   if (phone) list = list.filter((i) => i.agentPhone === phone);
   return { inspections: list.sort((a, b) => b.createdAt.localeCompare(a.createdAt)) };
 });
 
 // ---------------- TENANT & INSPECTION APIS ----------------
-// Tenant books inspection -> Generates Tracking ID
-route('POST', '/api/inspections/book', async ({ body }) => rentify.bookInspection(body));
+route('POST', '/api/inspections/book', async ({ body, session }) => {
+  return rentify.bookInspection({
+    ...body,
+    tenantName: (session && session.name) || body.tenantName,
+    tenantPhone: (session && session.phone) || body.tenantPhone,
+  });
+});
 
-// Update inspection status (Confirmed, Done, Cancelled, Declined)
 route('PATCH', '/api/inspections/:trackingId/status', ({ params, body }) =>
   rentify.updateInspectionStatus(params.trackingId, body.status)
 );
 
-// Get inspection by Tracking ID
 route('GET', '/api/inspections/:trackingId', ({ params }) => {
   const item = db.data.inspections.find((i) => i.trackingId === params.trackingId);
   if (!item) {
@@ -175,12 +221,10 @@ route('GET', '/api/inspections/:trackingId', ({ params }) => {
   return { inspection: item };
 });
 
-// Tenant checkout reservation (prevents double payment)
 route('POST', '/api/inspections/:trackingId/reserve', ({ params }) =>
   rentify.reserveForCheckout(params.trackingId)
 );
 
-// Tenant completes rental payment (records rent and 10% commission separately)
 route('POST', '/api/inspections/:trackingId/pay', ({ params }) =>
   rentify.processPayment(params.trackingId)
 );
@@ -209,10 +253,29 @@ route('POST', '/api/admin/payments/:id/release', ({ params }) =>
   rentify.releaseCommission(params.id)
 );
 
-// ---------------- HTTP SERVER ----------------
+// ---------------- HTTP SERVER WITH ROLE-BASED ACCESS CONTROL ----------------
 const server = http.createServer(async (req, res) => {
   const url = new URL(req.url, 'http://localhost');
   const pathname = decodeURIComponent(url.pathname);
+  const cookies = parseCookies(req);
+  const token = cookies[auth.COOKIE_NAME];
+  const session = auth.getSession(token);
+
+  // Role protected dashboard pages
+  if (req.method === 'GET') {
+    if (pathname.startsWith('/admin/') && (!session || session.role !== 'admin')) {
+      return send(res, 302, '', { Location: '/login.html?redirect=' + encodeURIComponent(pathname) });
+    }
+    if (pathname.startsWith('/agent/') && (!session || session.role !== 'agent')) {
+      return send(res, 302, '', { Location: '/login.html?redirect=' + encodeURIComponent(pathname) });
+    }
+    if (pathname.startsWith('/landlord/') && (!session || session.role !== 'landlord')) {
+      return send(res, 302, '', { Location: '/login.html?redirect=' + encodeURIComponent(pathname) });
+    }
+    if (pathname.startsWith('/tenant/') && (!session || session.role !== 'tenant')) {
+      return send(res, 302, '', { Location: '/login.html?redirect=' + encodeURIComponent(pathname) });
+    }
+  }
 
   const r = routes.find((x) => x.method === req.method && x.re.test(pathname));
   if (!r) {
@@ -226,8 +289,13 @@ const server = http.createServer(async (req, res) => {
   const params = Object.fromEntries(r.keys.map((k, i) => [k, decodeURIComponent(m[i + 1])]));
   try {
     const body = ['POST', 'PATCH', 'PUT'].includes(req.method) ? await readBody(req) : {};
-    const out = await r.handler({ req, body, params, query: url.searchParams });
+    const out = await r.handler({ req, body, params, query: url.searchParams, session, token });
     if (out && typeof out.__text === 'string') return send(res, 200, out.__text);
+    if (out && out.__headers) {
+      const headers = out.__headers;
+      delete out.__headers;
+      return send(res, 200, out, headers);
+    }
     return send(res, 200, out);
   } catch (e) {
     if (e.status) return send(res, e.status, { error: e.message });
@@ -237,6 +305,7 @@ const server = http.createServer(async (req, res) => {
 });
 
 rentify.seed();
+auth.seedDefaultUsers();
 
 if (require.main === module) {
   server.listen(config.port, () => {

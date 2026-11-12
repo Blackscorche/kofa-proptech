@@ -189,7 +189,62 @@
     }
   ],
   "payments": [],
-  "users": [],
+  "users": [
+    {
+      "id": "USR-ADMIN1",
+      "name": "Platform Admin",
+      "email": "admin@kofa.ng",
+      "phone": "+2348000000001",
+      "password": "b5a952a714c9c0a35905e2636c5d5b4c:d00c28cec303efbbcd2211680e1a99e234c5dfd5611eb5d00dd6fbf4a2a0458755ed814c1a75f39e542cac50df3ad97a7f1c4b7559cea65109de5ab8496ba2b0",
+      "role": "admin",
+      "status": "active",
+      "createdAt": "2026-11-12T11:10:15.569Z"
+    },
+    {
+      "id": "USR-AGENT1",
+      "name": "Abubakar Sadiq",
+      "email": "agent@kofa.ng",
+      "phone": "+2348030000001",
+      "password": "25ac395d9f24959dc8b2e5a54e6cdec7:27a095e72873a4068e63c95a27d799c56c5512ef235020a3adbfed711369979ecceb7551e2c22a2d1a3d6d94d55e3e79aa79e21e2a340bb5b049e3065570ea98",
+      "role": "agent",
+      "agentCode": "AGT 0412",
+      "agency": "Arewa Prime Realty",
+      "status": "active",
+      "createdAt": "2026-11-12T11:10:15.571Z"
+    },
+    {
+      "id": "USR-LANDLORD1",
+      "name": "Joseph Danladi",
+      "email": "landlord@kofa.ng",
+      "phone": "+2348032223344",
+      "password": "8e5e6c0b288cc59eb450d99aeff31988:94302c2e9f6217a45984973f7a822fbd3245018ffe54be999e64d0858f7de064598ba4f7e0911834bc1b203b761ae0dde9543db6d93626c54065a01bbc0a770e",
+      "role": "landlord",
+      "status": "active",
+      "createdAt": "2026-11-12T11:10:15.571Z"
+    },
+    {
+      "id": "USR-TENANT1",
+      "name": "Maryam Idris",
+      "email": "tenant@kofa.ng",
+      "phone": "+2348039998877",
+      "password": "c23e007f31d637da73b981f72bc0282f:cbe66cec13aba646d59074d8cd58464f7e28c3612f4c80318eb318abbe085d385a8bd880a690cae6d177e87165f0503f8c7f70a8d1a592296bb5cfec1c49daf7",
+      "role": "tenant",
+      "status": "active",
+      "createdAt": "2026-11-12T11:10:15.572Z"
+    }
+  ],
   "complaints": [],
-  "meta": {}
+  "meta": {},
+  "sessions": {
+    "06330092ab75456c40277e3941cce85c80f29dd1f08eb9cc": {
+      "userId": "USR-AGENT1",
+      "role": "agent",
+      "name": "Abubakar Sadiq",
+      "email": "agent@kofa.ng",
+      "phone": "+2348030000001",
+      "agentCode": "AGT 0412",
+      "createdAt": "2026-11-12T11:10:21.103Z",
+      "expiresAt": "2026-11-19T11:10:21.103Z"
+    }
+  }
 }
