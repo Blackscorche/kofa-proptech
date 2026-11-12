@@ -186,6 +186,48 @@
       "expiresAt": "2026-11-13T10:59:42.532Z",
       "createdAt": "2026-11-12T10:59:42.533Z",
       "updatedAt": "2026-11-12T10:59:42.533Z"
+    },
+    {
+      "id": "INS-E9CDE2",
+      "trackingId": "TRK-6CC2DD",
+      "propertyId": "PROP-811C53",
+      "propertyAccountNumber": "KOF-104922",
+      "propertyTitle": "Modern Room Self-Contain, Kakuri",
+      "propertyLocation": "Kakuri, Kaduna",
+      "publicationId": "PUB-45F238",
+      "agentCode": "AGT 0412",
+      "agentName": "Abubakar Sadiq",
+      "agentPhone": "+2348030000001",
+      "tenantName": "Phone User",
+      "tenantPhone": "+2349037959033",
+      "preferredTime": "Afternoon",
+      "channel": "USSD",
+      "status": "Requested",
+      "price": 495000,
+      "expiresAt": "2026-11-13T12:38:45.486Z",
+      "createdAt": "2026-11-12T12:38:45.486Z",
+      "updatedAt": "2026-11-12T12:38:45.486Z"
+    },
+    {
+      "id": "INS-E2F4B8",
+      "trackingId": "TRK-FBCAE3",
+      "propertyId": "PROP-D9EF92",
+      "propertyAccountNumber": "KOF-104921",
+      "propertyTitle": "2-Bedroom Serviced Flat, Ungwan Boro",
+      "propertyLocation": "Ungwan Boro, Kaduna",
+      "publicationId": "PUB-AA4256",
+      "agentCode": "AGT 0412",
+      "agentName": "Abubakar Sadiq",
+      "agentPhone": "+2348030000001",
+      "tenantName": "Phone User",
+      "tenantPhone": "+2349037959033",
+      "preferredTime": "Evening",
+      "channel": "USSD",
+      "status": "Requested",
+      "price": 1100000,
+      "expiresAt": "2026-11-13T12:43:29.956Z",
+      "createdAt": "2026-11-12T12:43:29.956Z",
+      "updatedAt": "2026-11-12T12:43:29.956Z"
     }
   ],
   "payments": [],
@@ -245,6 +287,62 @@
       "agentCode": "AGT 0412",
       "createdAt": "2026-11-12T11:10:21.103Z",
       "expiresAt": "2026-11-19T11:10:21.103Z"
+    },
+    "c933c4a268570b97d7748ea1b2f35cdea2acb7e902532139": {
+      "userId": "USR-LANDLORD1",
+      "role": "landlord",
+      "name": "Joseph Danladi",
+      "email": "landlord@kofa.ng",
+      "phone": "+2348032223344",
+      "createdAt": "2026-11-12T12:41:09.268Z",
+      "expiresAt": "2026-11-19T12:41:09.268Z"
+    },
+    "de6ed3bc841c5bb086b29ce0d606ad1c39d30b92c100d92a": {
+      "userId": "USR-AGENT1",
+      "role": "agent",
+      "name": "Abubakar Sadiq",
+      "email": "agent@kofa.ng",
+      "phone": "+2348030000001",
+      "agentCode": "AGT 0412",
+      "createdAt": "2026-11-12T12:41:48.934Z",
+      "expiresAt": "2026-11-19T12:41:48.934Z"
+    },
+    "0edf82ddc02dce0a3a2ded5c519e2c7e19a1c1771d750bdc": {
+      "userId": "USR-AGENT1",
+      "role": "agent",
+      "name": "Abubakar Sadiq",
+      "email": "agent@kofa.ng",
+      "phone": "+2348030000001",
+      "agentCode": "AGT 0412",
+      "createdAt": "2026-11-12T12:47:36.815Z",
+      "expiresAt": "2026-11-19T12:47:36.815Z"
+    },
+    "e64a16c9a3ec4fc2ca49451d18213a17391081e7f8d5ea83": {
+      "userId": "USR-TENANT1",
+      "role": "tenant",
+      "name": "Maryam Idris",
+      "email": "tenant@kofa.ng",
+      "phone": "+2348039998877",
+      "createdAt": "2026-11-12T12:47:36.894Z",
+      "expiresAt": "2026-11-19T12:47:36.894Z"
+    },
+    "0f6ef24f1f0df24d0d97ed88ccf6f56675b452c5ddce52fc": {
+      "userId": "USR-LANDLORD1",
+      "role": "landlord",
+      "name": "Joseph Danladi",
+      "email": "landlord@kofa.ng",
+      "phone": "+2348032223344",
+      "createdAt": "2026-11-12T12:47:36.934Z",
+      "expiresAt": "2026-11-19T12:47:36.934Z"
+    },
+    "844b52f42d4edea6588d03808f1749e09c4bca5f683a34ac": {
+      "userId": "USR-ADMIN1",
+      "role": "admin",
+      "name": "Platform Admin",
+      "email": "admin@kofa.ng",
+      "phone": "+2348000000001",
+      "createdAt": "2026-11-12T12:47:37.010Z",
+      "expiresAt": "2026-11-19T12:47:37.010Z"
     }
   }
 }
